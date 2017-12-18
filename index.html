@@ -1,0 +1,105 @@
+﻿<!DOCTYPE html>
+<html ng-app="toDoList">
+<head>
+    <title>ToDo List (Task1)</title>
+    <script src="Libraries/angular.js"></script>
+    <link href="Libraries/bootstrap.css" rel="stylesheet" />
+    <link href="Libraries/bootstrap-theme.css" rel="stylesheet" />
+    <script src="todo.js"></script>
+    <script>
+
+        var addTask = angular.module("toDoList", []);
+
+
+        addTask.controller("toDoListCtl", function ($scope) {
+
+            $scope.data = todoModel.read();
+            $scope.taskName = "";
+            $scope.descr = "";
+            $scope.dDate = "";
+
+
+            $scope.removeTask = function (taskID) {
+                    todoModel.removeItem(taskID);
+                    todoModel.save();
+            };
+
+
+            $scope.addTask = function () {
+
+                if($scope.taskName != "" &&
+                $scope.descr != "" &&
+                $scope.dDate != "") {
+                    todoModel.addItem($scope.taskName, $scope.dDate, $scope.descr, false);
+                    todoModel.save();
+
+                    $scope.taskName = "";
+                    $scope.descr = "";
+                    $scope.dDate = "";
+                }else{alert("Enter all value");};
+
+            };
+
+            $scope.showModal = function (idd) {
+                for (deal in $scope.data){
+                    if ($scope.data[deal].id == idd)
+                        $scope.desctr = $scope.data[deal].description;
+                        $scope.url = "detail.html";
+                }
+            };
+
+            $scope.closeModal = function () {
+                $scope.url = "";
+            }
+
+
+        });
+
+    </script>
+
+
+</head>
+<body ng-controller="toDoListCtl">
+
+    <div class="container">
+        <div class="page-header">
+        <h3>ToDo List</h3>
+        </div>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Date</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tr ng-repeat="deal in data">
+                <td>{{deal.name}}</td>
+                <td>{{deal.duedate}}</td>
+                <td><button class="btn btn-danger" ng-click="removeTask(deal.id)">&times;</button>
+                    <button class="btn btn-info" ng-click="showModal(deal.id)">Detail</button>
+                    <ng-include src="url"></ng-include>
+                </td>
+            </tr>
+        </table>
+        <div>
+           <form>
+               <div class="form-group">
+                   <label for="name">Name</label>
+                   <input type="text" class="form-control" id="name" ng-model="taskName" required>
+               </div>
+               <div class="form-group">
+                   <label for="DueDate">Due Date</label>
+                   <input type="date" class="form-control" id="DueDate" ng-model="dDate" required>
+               </div>
+               <div class="form-group">
+                   <label for="Descr">Description</label>
+                   <textarea class="form-control" id="Descr" wrap="soft" ng-model="descr" required></textarea>
+               </div>
+               <button type="submit" class="btn btn-default" ng-click="addTask()">Add</button>
+           </form>
+        </div>
+    </div>
+</body>
+</html>
